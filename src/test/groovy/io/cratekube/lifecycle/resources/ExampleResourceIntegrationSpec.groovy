@@ -1,7 +1,7 @@
-package io.cratekube.example.resources
+package io.cratekube.lifecycle.resources
 
-import io.cratekube.example.BaseIntegrationSpec
-import io.cratekube.example.model.ExampleModel
+import io.cratekube.lifecycle.BaseIntegrationSpec
+import io.cratekube.lifecycle.model.ExampleModel
 
 import javax.ws.rs.core.GenericType
 

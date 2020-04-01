@@ -1,4 +1,4 @@
-package io.cratekube.example.resources
+package io.cratekube.lifecycle.resources
 
 import spock.lang.Specification
 import spock.lang.Subject

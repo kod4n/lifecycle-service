@@ -1,4 +1,4 @@
-package io.cratekube.example
+package io.cratekube.lifecycle
 
 import ru.vyarus.dropwizard.guice.test.spock.UseDropwizardApp
 import spock.lang.Specification

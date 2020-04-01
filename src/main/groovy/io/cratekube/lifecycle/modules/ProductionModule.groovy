@@ -1,4 +1,4 @@
-package io.cratekube.example.modules
+package io.cratekube.lifecycle.modules
 
 import com.google.inject.AbstractModule
 

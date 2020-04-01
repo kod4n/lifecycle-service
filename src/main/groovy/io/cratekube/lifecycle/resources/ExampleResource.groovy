@@ -1,6 +1,6 @@
-package io.cratekube.example.resources
+package io.cratekube.lifecycle.resources
 
-import io.cratekube.example.model.ExampleModel
+import io.cratekube.lifecycle.model.ExampleModel
 import io.swagger.annotations.Api
 
 import javax.ws.rs.Consumes
