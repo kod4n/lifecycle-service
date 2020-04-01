@@ -1,4 +1,4 @@
-package io.cratekube.example
+package io.cratekube.lifecycle
 
 import io.dropwizard.Configuration
 import io.dropwizard.client.JerseyClientConfiguration

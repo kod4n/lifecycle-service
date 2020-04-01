@@ -1,7 +1,7 @@
-package io.cratekube.example.modules
+package io.cratekube.lifecycle.modules
 
 import com.google.inject.Provides
-import io.cratekube.example.AppConfig
+import io.cratekube.lifecycle.AppConfig
 import io.dropwizard.client.JerseyClientBuilder
 import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule
 

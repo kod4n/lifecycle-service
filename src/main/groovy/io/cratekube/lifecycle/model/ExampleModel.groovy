@@ -1,4 +1,4 @@
-package io.cratekube.example.model
+package io.cratekube.lifecycle.model
 
 import groovy.transform.Immutable
 
