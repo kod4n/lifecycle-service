@@ -10,6 +10,9 @@
 !ci
 !ci/*
 
+!docs
+!docs/*
+
 !.gitignore
 !.gitattributes
 !.editorconfig
