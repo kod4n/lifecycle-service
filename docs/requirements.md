@@ -13,12 +13,6 @@ As a user I want the Lifecycle Service to be an independent component,
 so that I can version functionality and features, 
 because functionality and features need to be incrementally added.
 
-### Operations bootstrap mode
-![Generic badge](https://img.shields.io/badge/TECHNICAL-MVP-GREEN.svg)  
-As a user I want the Lifecycle Service to bootstrap the operations cluster, 
-so that we are not highly coupled to a specific cloud provider, 
-because we want to use this functionality across multiple clouds.
-
 ### Management of CrateKube components  
 ![Generic badge](https://img.shields.io/badge/BUSINESS-MVP-GREEN.svg)  
 As a user I want the Lifecycle Service to manage CrateKube components, 
@@ -60,12 +54,6 @@ because I do not want components upgraded without my knowledge.
 As a user I want the Lifecycle Service to upgrade components on release, 
 so that my components are always up to date, 
 because I want to receive the latest bug fixes and features.  
-
-#### Automated component teardown  
-![Generic badge](https://img.shields.io/badge/TECHNICAL-MVP-GREEN.svg)  
-As a user I want the Lifecycle Service to teardown components in an automated fashion, 
-so that I can teardown components easily and without errors, 
-because manual teardown is difficult and error prone.
 
 ### Async for long running tasks  
 ![Generic badge](https://img.shields.io/badge/TECHNICAL-MVP-GREEN.svg)  
