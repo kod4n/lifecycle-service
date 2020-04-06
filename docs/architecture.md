@@ -1,8 +1,7 @@
 # Lifecycle Service Architecture Design
 ## Overview    
-The `lifecycle-service` will be the primary initiator of all platform components. 
-It is responsible for tracking the lifecycle of all platform components and handling service creation, update, and teardown. 
-The service will provide a bootstrap mode in which it is responsible for creating the `Operations Cluster` and should be able to reconfigure itself as needed to be aware of newly updated and created components. 
+The `lifecycle-service` is responsible for tracking the lifecycle of all platform components and performing component creation and upgrade where necessary. 
+The service should be able to reconfigure itself as needed to be aware of newly updated and created components. 
 It will interact directly with the cloud-mgmt-service and the cluster-mgmt-service to create cloud resources and Kubernetes clusters.  
 
 The MVP targets AWS and provides automated lifecycle management for CrateKube. 
