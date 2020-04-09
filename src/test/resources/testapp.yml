@@ -1,19 +1,35 @@
 server:
   applicationConnectors:
-  - type: http
-    port: 9000
+    - type: http
+      port: 9000
   adminConnectors:
-  - type: http
-    port: 9001
+    - type: http
+      port: 9001
 
 logging:
   loggers:
     io.cratekube: DEBUG
     org.reflections: ERROR
 
+swagger:
+  resourcePackage: io.cratekube.lifecycle.resources
+
 jerseyClient:
   timeout: 5000ms
   gzipEnabledForRequests: false
 
-swagger:
-  resourcePackage: io.cratekube.example.resources
+auth:
+  apiKeys:
+    - name: admin
+      key: ${ADMIN_APIKEY:-eknvDrmcDtseeieSMTvngo}
+      roles: ['admin']
+
+kubeconfigLocation: ${KUBECONFIG_LOCATION:-/app/rke-config/kube_config_cluster.yml}
+
+jobs:
+  upgradeAvailabilityJob: ${JOB_EXECUTION_FREQUENCY:-10min}
+
+managedComponents:
+  cluster-mgmt-service: https://github.com/cratekube/cluster-mgmt-service/releases.atom
+  cloud-mgmt-service: https://github.com/cratekube/cloud-mgmt-service/releases.atom
+  lifecycle-service: https://github.com/cratekube/lifecycle-service/releases.atom
