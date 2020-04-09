@@ -22,7 +22,7 @@ A microservice developed by the CrateKube team responsible for providing everyth
 ## Diagrams
 #### Component and Logical
 
-![Component and Logical](https://www.plantuml.com/plantuml/img/bL8xRy8m4DxpAquWTRDA5rGn85IZJC00weGONEU8BFn0zeMgglhVwn0IjS4gz1Rx_3ryv_CiaF1K6PsH8esmK7kK7pBkDkXFIY8muCuSdKLBy00BLoefDCoLABqm6JHn5F8WIeG1rwugO2bip4mjkTWCuBFb0cnbpMAcDCH2W-zWE1hbCLhMLqVll5T8xyuVO4FEnuDVbh2r3Sf2W-uwBE5qrMNFIxVuZ_Bo_6NCd_vovReAXFvMztNxPsB_0VPOFB-bRaZLmzWq3Ko0hr_dTsZJLVn3VZt3kyNzOTLAZu8mF1QeCQxP36qH_-Kt)  
+![Component and Logical](https://www.plantuml.com/plantuml/img/bPAz2i8m58NtFiMbWbj05n47AQPqgelY90unlIt1f2rfAeZuxgQ_Y2rIptH3ldFk8SGh3DEcLD8nmaY4KCJ87znEHzHtmH48q4pbMOgfWJc4MI8ua-0BbcYc76YKCtvZ2O9BPLP6i6UfFQdAqiQuyEpOMcTUWKGbof2YGIumMom2gnvyzLEVF-Wt29OTyP4R1BiLNVxAfR8i3EffpMlqktkCqVewjcEi4I7RyOiDqCF9d-0TR_67VVZyhTd3DB8VuWq0)  
 
 <details><summary>Show UML Code</summary>
 <p>
@@ -31,21 +31,17 @@ A microservice developed by the CrateKube team responsible for providing everyth
 @startuml
 title Lifecycle Service - Component & Logical Diagram
        package "Cloud Management Service" {
-         [cloud-mgmt-service] #00FFFF
-       }
-        package "Network Storage" {
-          [network-storage]
+            [cloud-mgmt-service] #00FFFF
         }
         package "Lifecycle Service" {
-          [lifecycle-service] #FFB6C1
+            [lifecycle-service] #FFB6C1
         }
         package "Cluster Management Service" {
-          [cluster-mgmt-service] #fed8b1
+            [cluster-mgmt-service] #fed8b1
         }
         [lifecycle-service] -->  [lifecycle-service] : CRUD
         [lifecycle-service] -->  [cluster-mgmt-service] : CRUD
         [lifecycle-service] -->  [cloud-mgmt-service] : CRUD
-        [lifecycle-service] -->  [network-storage] : Creates/deletes
 @enduml
 ```
   
@@ -54,7 +50,7 @@ title Lifecycle Service - Component & Logical Diagram
 
 #### Physical
 
-![Physical](https://www.plantuml.com/plantuml/img/jP8zJyCm48Rt_8eZB23LJM50Y06r3QqOmeTK98QgW-DSKmj_HFQbLONwtt6Q5bKK40ktsBbxyjxhi_kUkADQg-X46g7g0c51LFcR975yrIqbBUgyzkY4DOI6kiBgXA-yuhblLYP3mREvTQnIt3HAYUQUq2M5z9GCNYUfrTgQRlL_JHwHLjQzILCEJ96s6dUev1BTEXbbmq5LAIauIMioouiX3o82NMk992c4JCvHh4NOJT0jfK1WyBnO-_2RWZl9IyTr99Ij2nYbb_0UGOYVfS-uoZjnau5zAkx4Bza4HeRd2eluVAiGC61EbWjYjp1zgj1jfJoagcxEDuCRSBOcz5lSs32w-1YBTuQQgBXuusN0TZLuu2Pywp2J_TaEyIQceaMPBZKntq8pE9rZSPrVVAARxteq4_bJXm1-rU_rnY5QuhSkHvTp9A_sn87wU3oyIdzrFnfE8BFD3TzR7xoJTI5_96xQvyLyMvzzzRg9Db4VJH5UqmS0)  
+![Physical](https://www.plantuml.com/plantuml/img/jP4xRy8m483t_8fhkhGI9hH3LJ5KG80fVKXKwe0wEFQHMFWHsGu8LVptEWGg16tLfRVuzVcxytdWFBM-LZAw49h9cYEKtbUkdoIMhhk5y6MTrmujCzgZzbrcL4BNJjBSDICHuS2HXR6aabGtfaHHvz4cN3YV3DzcgL7Aw6xrVqcUqA-DNGfT33LFMySOfLYXtIIJR3IiAYaOzSBep50-ea72qBObUU4bGYOMo3Oip6PeLu8X47WfDovSap0MjB1KHKoQciCalOMF24ByhBwYCk_4pGuSjk9E_9hDOA9fBf77rpj3m81OKPIUFC3ykKAxKpb8PTsyxntwO4tjqUrmRKBhudCitXVKH4NPaXO1sv_18zLXhK9F3cyxnfkOinObgb2Uk1PwXyi5yllyvWlTVfUZwSYVCWJmrD_hJKEqn6zPpZxdJ2yFn95zEXtTfQVLRwDjD43Dmyz_0W00)  
 
 <details><summary>Show UML Code</summary>
 <p>
@@ -76,9 +72,6 @@ cloud EC2 {
         }
         package "Lifecycle Service" {
             [lifecycle-service] #FFB6C1
-        }
-        package "EBS Local Host Storage" {
-            [network-storage] 
         }
     }
 }

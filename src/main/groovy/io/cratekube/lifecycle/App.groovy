@@ -1,5 +1,9 @@
 package io.cratekube.lifecycle
 
+import com.codahale.metrics.SharedMetricRegistries
+import de.spinscale.dropwizard.jobs.Job
+import io.cratekube.lifecycle.auth.ApiKeyAuthBundle
+import io.cratekube.lifecycle.auth.ApiKeyAuthConfig
 import io.cratekube.lifecycle.modules.ProductionModule
 import io.dropwizard.Application
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor
@@ -36,12 +40,22 @@ class App extends Application<AppConfig> {
         }
       }
 
+      addBundle new ApiKeyAuthBundle<AppConfig>() {
+        @Override
+        protected ApiKeyAuthConfig getApiKeyAuthConfig(AppConfig configuration) {
+          return configuration.auth
+        }
+      }
+
       // configures the application to use Guice for dependency injection
       addBundle GuiceBundle.builder()
                            .enableAutoConfig('io.cratekube.lifecycle')
                            .injectorFactory(new BindingsOverrideInjectorFactory())
                            .modules(new ProductionModule())
                            .build()
+
+      // force dropwizard-jobs using main metrics registry for all jobs
+      SharedMetricRegistries.add(Job.DROPWIZARD_JOBS_KEY, metricRegistry)
     }
   }
 

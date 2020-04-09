@@ -5,7 +5,7 @@
 [![Build Status](https://travis-ci.com/cratekube/lifecycle-service.svg?branch=master)](https://travis-ci.com/cratekube/lifecycle-service)
 [![Coverage Status](https://coveralls.io/repos/github/cratekube/lifecycle-service/badge.svg?branch=master)](https://coveralls.io/github/cratekube/lifecycle-service?branch=master)
 
-This project is responsible for bootstrapping the CrateKube service and all initial platform services.
+This project is responsible for managing the lifecycle of all CrateKube platform components.
 
 ## Configuration
 Internal and external services are configured by extending the Dropwizard application configuration with additional
@@ -32,12 +32,12 @@ the Dropwizard application container.  The examples below should be executed fro
 
 Running the base docker build:
 ```bash
-docker run --target build .
+docker build --target build .
 ```
 
 Generating the Dropwizard application docker image:
 ```bash
-docker run --target package -t my-app .
+docker build --target package -t my-app .
 ```
 
 ## Using the API client
