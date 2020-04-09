@@ -1,5 +1,11 @@
 package io.cratekube.lifecycle
 
+import groovy.transform.Memoized
+import io.cratekube.lifecycle.api.ComponentApi
+import io.cratekube.lifecycle.api.GitHubApi
+import io.cratekube.lifecycle.api.KubectlApi
+import io.cratekube.lifecycle.api.ProcessExecutor
+import org.spockframework.mock.MockUtil
 import ru.vyarus.dropwizard.guice.test.spock.UseDropwizardApp
 import spock.lang.Specification
 
@@ -13,8 +19,18 @@ import javax.ws.rs.client.Invocation
  */
 @UseDropwizardApp(value = App, hooks = IntegrationSpecHook, config = 'src/test/resources/testapp.yml')
 abstract class BaseIntegrationSpec extends Specification {
+  MockUtil mockUtil = new MockUtil()
   @Inject Client client
+  @Inject AppConfig config
+  @Inject ComponentApi components
+  @Inject ProcessExecutor kubectlCmd
+  @Inject KubectlApi kubectlApi
+  @Inject GitHubApi gitHubApi
 
+  def setup() {
+    [components, kubectlCmd, kubectlApi, gitHubApi].findAll { mockUtil.isMock(it) }
+      .each { mockUtil.attachMock(it, this) }
+  }
   /**
    * Base path to use for API requests.  Extending classes should use a
    * {@code basePath} property to set the base path that should be used
@@ -32,5 +48,11 @@ abstract class BaseIntegrationSpec extends Specification {
    */
   Invocation.Builder baseRequest(String path = '') {
     return client.target("http://localhost:9000${basePath}${path}").request()
+  }
+
+  @Memoized
+  protected Invocation.Builder requestWithAdminToken(String path = '') {
+    baseRequest(path)
+      .header('Authorization', "Bearer ${config.auth.apiKeys.find {it.name == 'admin'}.key}")
   }
 }
