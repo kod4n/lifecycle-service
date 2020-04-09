@@ -1,20 +1,28 @@
 package io.cratekube.lifecycle.modules
 
-import com.google.inject.Provides
 import io.cratekube.lifecycle.AppConfig
-import io.dropwizard.client.JerseyClientBuilder
+import io.cratekube.lifecycle.api.ComponentApi
+import io.cratekube.lifecycle.api.GitHubApi
+import io.cratekube.lifecycle.api.KubectlApi
+import io.cratekube.lifecycle.api.ProcessExecutor
 import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule
-
-import javax.inject.Singleton
-import javax.ws.rs.client.Client
+import spock.mock.DetachedMockFactory
 
 /**
  * Guice module used for integration specs.
  */
 class IntegrationSpecModule extends DropwizardAwareModule<AppConfig> {
-  @Provides
-  @Singleton
-  Client clientProvider() {
-    return new JerseyClientBuilder(environment()).using(configuration().jerseyClient).build('external-client')
+  DetachedMockFactory mockFactory = new DetachedMockFactory()
+
+  @Override
+  protected void configure() {
+    bind ComponentApi toInstance mock(ComponentApi)
+    bind ProcessExecutor toInstance mock(ProcessExecutor)
+    bind KubectlApi toInstance mock(KubectlApi)
+    bind GitHubApi toInstance mock(GitHubApi)
+  }
+
+  def <T> T mock(Class<T> type) {
+    return mockFactory.Mock(type)
   }
 }

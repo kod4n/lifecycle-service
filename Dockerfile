@@ -39,6 +39,11 @@ RUN ./gradlew --no-daemon jacocoTestReport coveralls
 ######################
 FROM openjdk:8u212-jre-alpine3.9 as package
 
+RUN apk --no-cache add bash curl openssl &&\
+    curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.16.3/bin/linux/amd64/kubectl &&\
+    mv kubectl /bin/kubectl &&\
+    chmod +x /bin/kubectl
+
 ## setup env var for the app name
 ENV CRATEKUBE_APP lifecycle-service
 
