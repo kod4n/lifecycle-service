@@ -1,42 +1,44 @@
 package io.cratekube.lifecycle.service
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.cratekube.lifecycle.api.ComponentApi
 import io.cratekube.lifecycle.api.GitHubApi
 import io.cratekube.lifecycle.api.KubectlApi
-import io.cratekube.lifecycle.model.Component
+import io.cratekube.lifecycle.api.exception.FailedException
 import org.valid4j.errors.RequireViolation
-import spock.lang.PendingFeature
 import spock.lang.Specification
 import spock.lang.Subject
 
+import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
+import static org.hamcrest.Matchers.nullValue
 import static spock.util.matcher.HamcrestSupport.expect
 
 class ComponentServiceSpec extends Specification {
   @Subject ComponentApi subject
-  Map<String, Component> componentCache
   KubectlApi kubectlApi
   GitHubApi gitHubApi
+  ObjectMapper objectMapper
 
   def setup() {
-    componentCache = [:]
     kubectlApi = Mock()
     gitHubApi = Mock()
-    subject = new ComponentService(componentCache, kubectlApi, gitHubApi)
+    objectMapper = new ObjectMapper()
+    subject = new ComponentService(kubectlApi, gitHubApi, objectMapper)
   }
 
   def 'should require valid constructor params'() {
     when:
-    new ComponentService(cache, kube, git)
+    new ComponentService(kube, git, null)
 
     then:
     thrown RequireViolation
 
     where:
-    cache               | kube            | git
-    null                | null            | null
-    this.componentCache | null            | null
-    this.componentCache | this.kubectlApi | null
+    kube            | git            | om
+    null            | null           | null
+    this.kubectlApi | null           | null
+    this.kubectlApi | this.gitHubApi | null
   }
 
   def 'getComponent should require valid args'() {
@@ -50,16 +52,116 @@ class ComponentServiceSpec extends Specification {
     name << [null, '']
   }
 
-  @PendingFeature
-  def 'getComponent should return component'() {
+  def 'getComponent should retrieve and return component'() {
+    given:
+    //defaults to empty cache
+    def nm = 'test-name'
+    def curVersion = '1.0.0'
+    def cfg = /{
+                  "items": [
+                      {
+                          "spec": {
+                              "containers": [
+                                  {
+                                      "image": "dockerhub.cisco.com\/crate-docker\/lifecycle-service:${curVersion}"
+                                  }
+                              ]
+                          }
+                      }
+                  ]
+              }/.stripMargin()
+    kubectlApi.getPodJsonByNameSelector(nm) >> cfg
+    def latVersion = '1.0.1'
+    gitHubApi.getLatestVersionFromAtomFeed(nm) >> latVersion
+
+    when:
+    def result = subject.getComponent(nm)
+
+    then:
+    expect result, notNullValue()
+    verifyAll(result) {
+      expect name, equalTo(nm)
+      expect config, equalTo(cfg)
+      expect currentVersion, equalTo(curVersion)
+      expect latestVersion, equalTo(latVersion)
+    }
+  }
+
+  def 'getComponent should return null when no resource matches in k8s or github'() {
     given:
     def name = 'test-name'
+    kubectlApi.getPodJsonByNameSelector(name) >> '''{
+                                        "apiVersion": "v1",
+                                        "items": [],
+                                        "kind": "List",
+                                        "metadata": {
+                                            "resourceVersion": "",
+                                            "selfLink": ""
+                                        }
+                                      }
+                                    '''
+    gitHubApi.getLatestVersionFromAtomFeed(name) >> {throw new FailedException()}
+    when:
+    def result = subject.getComponent(name)
 
+    then:
+    expect result, nullValue()
+  }
+
+  def 'getComponent should return partial component when no resource matches in k8s but exists in github'() {
+    given:
+    def name = 'test-name'
+    def latestVer = '1.0.1'
+    kubectlApi.getPodJsonByNameSelector(name) >> '''{
+                                        "apiVersion": "v1",
+                                        "items": [],
+                                        "kind": "List",
+                                        "metadata": {
+                                            "resourceVersion": "",
+                                            "selfLink": ""
+                                        }
+                                      }
+                                    '''
+    gitHubApi.getLatestVersionFromAtomFeed(name) >> latestVer
     when:
     def result = subject.getComponent(name)
 
     then:
     expect result, notNullValue()
+    expect result.latestVersion, equalTo(latestVer)
+    expect result.currentVersion, nullValue()
+    expect result.config, nullValue()
+    expect result.name, equalTo(name)
+  }
+
+  def 'getComponent should return partial component when resource matches in k8s but does not exist in github'() {
+    given:
+    def name = 'test-name'
+    def curVersion = '1.0.1'
+    def cfg = /{
+                  "items": [
+                      {
+                          "spec": {
+                              "containers": [
+                                  {
+                                      "image": "dockerhub.cisco.com\/crate-docker\/lifecycle-service:${curVersion}"
+                                  }
+                              ]
+                          }
+                      }
+                  ]
+              }/.stripMargin()
+    kubectlApi.getPodJsonByNameSelector(name) >> cfg
+    gitHubApi.getLatestVersionFromAtomFeed(name) >> {throw new FailedException()}
+    when:
+    def result = subject.getComponent(name)
+
+    then:
+    expect result, notNullValue()
+    expect result.currentVersion, equalTo(curVersion)
+    expect result.config, equalTo(cfg)
+    expect result.latestVersion, nullValue()
+    expect result.name, equalTo(name)
   }
 
   def 'applyComponent should require valid args'() {
@@ -75,5 +177,19 @@ class ComponentServiceSpec extends Specification {
     ''             | null
     'test-version' | null
     'test-version' | ''
+  }
+
+  def 'applyComponent should apply component version'() {
+    given:
+    def nm = 'test-name'
+    def ver = 'test-version'
+    def depComp = 'deployable-k8s-config'
+    gitHubApi.getDeployableComponent(nm, ver) >> depComp
+
+    when:
+    subject.applyComponent(nm, ver)
+
+    then:
+    1 * kubectlApi.apply(depComp)
   }
 }

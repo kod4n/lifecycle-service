@@ -8,6 +8,8 @@ import io.cratekube.lifecycle.model.Component
 import io.cratekube.lifecycle.modules.annotation.ComponentCache
 import io.dropwizard.auth.Auth
 import io.swagger.annotations.Api
+import io.swagger.annotations.ApiImplicitParam
+import io.swagger.annotations.ApiImplicitParams
 import io.swagger.annotations.ApiParam
 
 import javax.annotation.security.RolesAllowed
@@ -20,6 +22,7 @@ import javax.ws.rs.PathParam
 import javax.ws.rs.Produces
 import javax.ws.rs.core.Response
 
+import static javax.ws.rs.core.Response.accepted
 import static org.hamcrest.Matchers.notNullValue
 import static org.valid4j.Assertive.require
 import static org.valid4j.matchers.ArgumentMatchers.notEmptyString
@@ -58,7 +61,7 @@ class ComponentResource {
     require name, notEmptyString()
     log.debug 'executing get component for [{}]', name
 
-    return Optional.empty()
+    return Optional.ofNullable(componentApi.getComponent(name))
   }
 
   /**
@@ -72,7 +75,7 @@ class ComponentResource {
   Map<String, Component> getComponentUpgradeAvailability() {
     log.debug 'executing get component upgrade availability'
 
-    return [:]
+    return componentCache
   }
 
   /**
@@ -87,6 +90,9 @@ class ComponentResource {
   @POST
   @RolesAllowed('admin')
   @Path('{name}/version')
+  @ApiImplicitParams(
+    @ApiImplicitParam(name = 'Authorization', value = 'API token', required = true, dataType = 'string', paramType = 'header')
+  )
   Response applyComponentVersion(
     @PathParam('name') String name,
     @ApiParam ComponentVersionRequest componentVersionRequest,
@@ -97,7 +103,8 @@ class ComponentResource {
     require user, notNullValue()
     log.debug 'executing apply component version for [{}] [{}]', name, componentVersionRequest.version
 
-    return null
+    componentApi.applyComponent(name, componentVersionRequest.version)
+    return accepted().location("/component/${name}".toURI()).build()
   }
 
   /**

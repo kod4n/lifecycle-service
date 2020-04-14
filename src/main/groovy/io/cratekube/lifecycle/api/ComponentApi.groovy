@@ -1,6 +1,7 @@
 package io.cratekube.lifecycle.api
 
 import io.cratekube.lifecycle.api.exception.FailedException
+import io.cratekube.lifecycle.api.exception.NotFoundException
 import io.cratekube.lifecycle.model.Component
 
 /**
@@ -10,7 +11,8 @@ import io.cratekube.lifecycle.model.Component
  */
 interface ComponentApi {
   /**
-   * Retrieves the CrateKube component specified by name. Returns null if it does not exist.
+   * Retrieves the CrateKube component specified by name.
+   * Returns null if component is not deployed and does not have released version in GitHub.
    *
    * @param name {@code non-empty} component name
    * @return the component
@@ -19,12 +21,11 @@ interface ComponentApi {
 
   /**
    * Applies a specific CrateKube component version configuration yaml.
-   * <p>
-   * Notes: We need to first verify the version exists in github,
-   * then retrieve from github, fail if not present, and use the k8s yaml 'template' to apply version.
    *
    * @param name {@code non-empty} component name
    * @param version {@code non-empty} component version
+   * @throws FailedException
+   * @throws NotFoundException
    */
-  void applyComponent(String name, String version) throws FailedException
+  void applyComponent(String name, String version) throws FailedException, NotFoundException
 }
