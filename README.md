@@ -64,5 +64,5 @@ The API docs for this project are powered by the Swagger Specification. After st
 APIs can be found at `http://localhost:<configured port>/swagger`
 
 ## Contributing
-If you are interesting in contributing to this project please read the [contribution](CONTRIBUTING.md) and 
-[pull request](PR_GUIDELINES.md) guidelines.  Thank you for your interest in CrateKube!
+If you are interested in contributing to this project please review the [contribution guidelines](https://github.com/cratekube/cratekube/blob/master/CONTRIBUTING.md).
+Thank you for your interest in CrateKube!
