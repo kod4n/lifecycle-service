@@ -16,12 +16,12 @@ interface KubectlApi {
   void apply(String yaml) throws FailedException
 
   /**
-   * Retrieves kubernetes resources.
+   * Retrieves kubernetes pod resource json by name selector.
    *
-   * @param arguments {@code non-empty} string argument list
+   * @param name {@code non-empty} selector to filter on
    * @return the json formatted output
    *
    * @throws FailedException
    */
-  String get(String arguments) throws FailedException
+  String getPodJsonByNameSelector(String name) throws FailedException
 }
