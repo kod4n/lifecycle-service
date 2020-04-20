@@ -37,8 +37,16 @@ class ComponentService implements ComponentApi {
     def stringResource = kubectlApi.getPodJsonByNameSelector(name)
     def jsonResource = objectMapper.readValue(stringResource, Map)
     if (jsonResource.items) {
-      def image = jsonResource.items[0].spec.containers[0].image
-      currentVersion = image.split(':')[1] as String
+      // only use a running pod for current version.
+      // see https://stackoverflow.com/questions/60045964/kubernetes-how-to-find-pods-that-are-running-and-ready
+      for (item in jsonResource.items) {
+        def ready = item.status.conditions.status.every {it == 'True'}
+        if (ready) {
+          //container name needs to match pod name selector
+          def image = item.spec.containers.find {it.name == name}.image
+          currentVersion = image.split(':')[1] as String
+        }
+      }
       config = stringResource
     }
     try {

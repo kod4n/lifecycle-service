@@ -13,6 +13,8 @@ interface ComponentApi {
   /**
    * Retrieves the CrateKube component specified by name.
    * Returns null if component is not deployed and does not have released version in GitHub.
+   * <p>
+   *   {@link Component#currentVersion} is null if no pods are running and ready.
    *
    * @param name {@code non-empty} component name
    * @return the component
