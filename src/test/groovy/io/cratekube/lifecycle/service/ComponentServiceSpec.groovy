@@ -63,7 +63,15 @@ class ComponentServiceSpec extends Specification {
                           "spec": {
                               "containers": [
                                   {
-                                      "image": "dockerhub.cisco.com\/crate-docker\/lifecycle-service:${curVersion}"
+                                      "name": "${nm}",
+                                      "image": "cratekube\/${nm}:${curVersion}"
+                                  }
+                              ]
+                          },
+                          "status": {
+                              "conditions": [
+                                  {
+                                      "status": "True"
                                   }
                               ]
                           }
@@ -72,6 +80,66 @@ class ComponentServiceSpec extends Specification {
               }/.stripMargin()
     kubectlApi.getPodJsonByNameSelector(nm) >> cfg
     def latVersion = '1.0.1'
+    gitHubApi.getLatestVersionFromAtomFeed(nm) >> latVersion
+
+    when:
+    def result = subject.getComponent(nm)
+
+    then:
+    expect result, notNullValue()
+    verifyAll(result) {
+      expect name, equalTo(nm)
+      expect config, equalTo(cfg)
+      expect currentVersion, equalTo(curVersion)
+      expect latestVersion, equalTo(latVersion)
+    }
+  }
+
+  def 'getComponent should retrieve and return ready component as current version'() {
+    given:
+    //defaults to empty cache
+    def nm = 'test-name'
+    def curVersion = '1.0.0'
+    def latVersion = '1.0.1'
+    def cfg = /{
+                  "items": [
+                      {
+                          "spec": {
+                              "containers": [
+                                  {
+                                      "name": "${nm}",
+                                      "image": "cratekube\/${nm}:${latVersion}"
+                                  }
+                              ]
+                          },
+                          "status": {
+                              "conditions": [
+                                  {
+                                      "status": "False"
+                                  }
+                              ]
+                          }
+                      },
+                      {
+                          "spec": {
+                              "containers": [
+                                  {
+                                      "name": "${nm}",
+                                      "image": "cratekube\/${nm}:${curVersion}"
+                                  }
+                              ]
+                          },
+                          "status": {
+                              "conditions": [
+                                  {
+                                      "status": "True"
+                                  }
+                              ]
+                          }
+                      }
+                  ]
+              }/.stripMargin()
+    kubectlApi.getPodJsonByNameSelector(nm) >> cfg
     gitHubApi.getLatestVersionFromAtomFeed(nm) >> latVersion
 
     when:
@@ -144,7 +212,15 @@ class ComponentServiceSpec extends Specification {
                           "spec": {
                               "containers": [
                                   {
-                                      "image": "dockerhub.cisco.com\/crate-docker\/lifecycle-service:${curVersion}"
+                                      "name": "${name}",
+                                      "image": "cratekube\/${name}:${curVersion}"
+                                  }
+                              ]
+                          },
+                          "status": {
+                              "conditions": [
+                                  {
+                                      "status": "True"
                                   }
                               ]
                           }
