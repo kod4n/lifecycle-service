@@ -80,7 +80,7 @@ class ComponentServiceSpec extends Specification {
               }/.stripMargin()
     kubectlApi.getPodJsonByNameSelector(nm) >> cfg
     def latVersion = '1.0.1'
-    gitHubApi.getLatestVersionFromAtomFeed(nm) >> latVersion
+    gitHubApi.getLatestVersion(nm) >> latVersion
 
     when:
     def result = subject.getComponent(nm)
@@ -140,7 +140,7 @@ class ComponentServiceSpec extends Specification {
                   ]
               }/.stripMargin()
     kubectlApi.getPodJsonByNameSelector(nm) >> cfg
-    gitHubApi.getLatestVersionFromAtomFeed(nm) >> latVersion
+    gitHubApi.getLatestVersion(nm) >> latVersion
 
     when:
     def result = subject.getComponent(nm)
@@ -168,7 +168,7 @@ class ComponentServiceSpec extends Specification {
                                         }
                                       }
                                     '''
-    gitHubApi.getLatestVersionFromAtomFeed(name) >> {throw new FailedException()}
+    gitHubApi.getLatestVersion(name) >> {throw new FailedException()}
     when:
     def result = subject.getComponent(name)
 
@@ -190,7 +190,7 @@ class ComponentServiceSpec extends Specification {
                                         }
                                       }
                                     '''
-    gitHubApi.getLatestVersionFromAtomFeed(name) >> latestVer
+    gitHubApi.getLatestVersion(name) >> latestVer
     when:
     def result = subject.getComponent(name)
 
@@ -228,7 +228,7 @@ class ComponentServiceSpec extends Specification {
                   ]
               }/.stripMargin()
     kubectlApi.getPodJsonByNameSelector(name) >> cfg
-    gitHubApi.getLatestVersionFromAtomFeed(name) >> {throw new FailedException()}
+    gitHubApi.getLatestVersion(name) >> {throw new FailedException()}
     when:
     def result = subject.getComponent(name)
 

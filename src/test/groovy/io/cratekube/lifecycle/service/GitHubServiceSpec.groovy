@@ -25,7 +25,7 @@ class GitHubServiceSpec extends Specification {
 
   def setup() {
     client = Mock()
-    gitHubConfig = new GitHubConfig('https://github.com/cratekube', 'https://raw.githubusercontent.com/cratekube')
+    gitHubConfig = new GitHubConfig('https://api.github.com/repos/cratekube', 'https://raw.githubusercontent.com/cratekube')
     subject = new GitHubService(client, gitHubConfig)
   }
 
@@ -42,35 +42,58 @@ class GitHubServiceSpec extends Specification {
     this.client | null
   }
 
-  def 'getLatestVersionFromAtomFeed should require valid args'() {
+  def 'getLatestVersion should require valid args'() {
     when:
-    subject.getLatestVersionFromAtomFeed(feedUrl)
+    subject.getLatestVersion(comp)
 
     then:
     thrown RequireViolation
 
     where:
-    feedUrl << [null, '']
+    comp << [null, '']
   }
 
-  def 'getLatestVersionFromAtomFeed should return the latest version'() {
+  def 'getLatestVersion should return the latest version'() {
     given:
     def component = 'dropwizard-groovy-template'
+    def version = '1.0.0'
+    client.target("${gitHubConfig.orgApiRepoHome}/${component}/tags") >> Mock(WebTarget) {
+      request() >> Mock(Invocation.Builder) {
+        get(List) >> [[name: version]]
+      }
+    }
 
     when:
-    def result = subject.getLatestVersionFromAtomFeed(component)
+    def result = subject.getLatestVersion(component)
 
     then:
     expect result, notNullValue()
-    result =~ /v?^(\d+\.\d+\.\d+)/
+    expect result, equalTo(version)
   }
 
-  def 'getLatestVersionFromAtomFeed should error if there are no versions'() {
+  def 'getLatestVersion should error if there are no versions'() {
     given:
     def component = 'cratekube'
+    client.target("${gitHubConfig.orgApiRepoHome}/${component}/tags") >> Mock(WebTarget) {
+      request() >> Mock(Invocation.Builder) {
+        get(List) >> []
+      }
+    }
 
     when:
-    subject.getLatestVersionFromAtomFeed(component)
+    subject.getLatestVersion(component)
+
+    then:
+    thrown FailedException
+  }
+
+  def 'getLatestVersion should error if client errors'() {
+    given:
+    def component = 'cratekube'
+    client.target("${gitHubConfig.orgApiRepoHome}/${component}/tags") >> {throw new WebApplicationException()}
+
+    when:
+    subject.getLatestVersion(component)
 
     then:
     thrown FailedException

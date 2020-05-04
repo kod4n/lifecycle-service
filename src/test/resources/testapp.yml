@@ -31,7 +31,7 @@ jobs:
   componentDeploymentJob: ${DEPLOYMENT_JOB_EXECUTION_FREQUENCY:-5min}
 
 github:
-  orgHome: ${GITHUB_ORG_HOME:-https://github.com/cratekube}
+  orgApiRepoHome: ${GITHUB_ORG_API_REPO_HOME:-https://api.github.com/repos/cratekube}
   orgBaseRawHome: ${GITHUB_ORG_RAW_HOME:-https://raw.githubusercontent.com/cratekube}
 
 managedComponents:

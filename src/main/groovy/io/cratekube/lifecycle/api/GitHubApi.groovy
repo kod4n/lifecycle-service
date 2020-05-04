@@ -17,7 +17,7 @@ interface GitHubApi {
    *
    * @throws FailedException
    */
-  String getLatestVersionFromAtomFeed(String component) throws FailedException
+  String getLatestVersion(String component) throws FailedException
 
   /**
    * Retrieves the specified deployable component configuration for a specific version.
