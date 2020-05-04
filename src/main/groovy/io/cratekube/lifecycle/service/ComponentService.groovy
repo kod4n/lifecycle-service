@@ -50,7 +50,7 @@ class ComponentService implements ComponentApi {
       config = stringResource
     }
     try {
-      latestVersion = gitHubApi.getLatestVersionFromAtomFeed(name)
+      latestVersion = gitHubApi.getLatestVersion(name)
       return new Component(name, config, currentVersion, latestVersion)
     } catch (FailedException | IOException ex) {
       log.debug(ex.toString())

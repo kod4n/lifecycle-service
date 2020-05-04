@@ -49,9 +49,9 @@ class AppConfig extends Configuration implements JobConfiguration {
 
 @Immutable
 class GitHubConfig {
-  /** location of the organization home */
+  /** organization api repos home */
   @NotEmpty
-  String orgHome
+  String orgApiRepoHome
 
   /** base location of the organizations raw content */
   @NotEmpty

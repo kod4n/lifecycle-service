@@ -40,7 +40,7 @@ The **lifecycle-service** manages [Deployment](https://kubernetes.io/docs/concep
 The **matchLabels** key used is `name` and its value is the name of the **managed component**'s repository. The name of the container must also match the repository name, for example: `lifecycle-service`, `cloud-mgmt-service` and `cluster-mgmt-service`. 
 A good example of the necessary configuration is the **lifecycle-service**'s [deployment.yml](https://github.com/cratekube/lifecycle-service/blob/master/deployment.yml).
 
-Versions of `deployment.yml` are managed by release (tag) and if a **managed component** does not exist on the **Kubernetes cluster** the **lifecycle-service** is configured to manage, the latest version (retrieved from the repositories `/releases.atom`) is used to retrieve the `deployment.yml` and deploy it. 
+Versions of `deployment.yml` are managed by release (tag) and if a **managed component** does not exist on the **Kubernetes cluster** the **lifecycle-service** is configured to manage, the latest version (retrieved from the repositories API endpoint`/tags`) is used to retrieve the `deployment.yml` and deploy it. 
 This behavior can be overridden for each **managed compent** by providing the `CLUSTER_MGMT_ENABLED`, `CLOUD_MGMT_ENABLED`, or `LIFECYCLE_ENABLED` environment variables with `false` values when running the application
 
 The **lifecycle-service** uses a [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/) file to communicate with the **Kubernetes cluster**. 

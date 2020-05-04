@@ -1,7 +1,6 @@
 package io.cratekube.lifecycle.service
 
 import groovy.util.logging.Slf4j
-import groovy.xml.XmlSlurper
 import io.cratekube.lifecycle.GitHubConfig
 import io.cratekube.lifecycle.api.GitHubApi
 import io.cratekube.lifecycle.api.exception.FailedException
@@ -29,16 +28,21 @@ class GitHubService implements GitHubApi {
   }
 
   @Override
-  String getLatestVersionFromAtomFeed(String component) {
+  String getLatestVersion(String component) {
     require component, notEmptyString()
-    def atomFeedLocation = "${gitHubConfig.orgHome}/${component}/releases.atom"
-    def result = new XmlSlurper().parse(atomFeedLocation)
-    def latest = result.entry?.isEmpty() ? null : result.entry.first()
-    if (!latest) {
-      throw new FailedException("Cannot retrieve the latest version. There are no releases at [${component}].")
+
+    String tags = "${gitHubConfig.orgApiRepoHome}/${component}/tags"
+    def result = []
+    try {
+      result = client.target(tags).request().get(List)
+    } catch (ProcessingException | WebApplicationException ex) {
+      log.debug(ex.toString())
+      throw new FailedException("Cannot retrieve the latest version for [${component}].")
     }
-    def id = latest.id.toString()
-    return id[id.lastIndexOf('/') + 1..-1]
+    if (!result) {
+      throw new FailedException("Cannot retrieve the latest version. There are no releases for [${component}].")
+    }
+    return result.first().name
   }
 
   @Override
