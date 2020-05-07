@@ -21,7 +21,7 @@ jerseyClient:
 auth:
   apiKeys:
     - name: admin
-      key: ${ADMIN_APIKEY:-eknvDrmcDtseeieSMTvngo}
+      key: ${ADMIN_APIKEY:-}
       roles: ['admin']
 
 kubeconfigLocation: ${KUBE_CONFIG_LOCATION:-/app/kube/kubeconfig}

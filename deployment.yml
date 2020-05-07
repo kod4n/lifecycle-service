@@ -28,14 +28,20 @@ spec:
         name: lifecycle-service
     spec:
       containers:
-        - name: lifecycle-service
-          image: cratekube/lifecycle-service:1.0.0
-          ports:
-            - containerPort: 9000
-          volumeMounts:
-            - mountPath: /app/kube/kubeconfig
-              name: kube-config-volume
+       - name: lifecycle-service
+         image: cratekube/lifecycle-service:1.0.0
+         ports:
+         - containerPort: 9000
+         volumeMounts:
+         - mountPath: /app/kube/kubeconfig
+           name: kube-config-volume
+         env:
+          - name: ADMIN_APIKEY
+            valueFrom:
+             secretKeyRef:
+              name: cratekube-api-secret
+              key: admin-api-key
       volumes:
         - name: kube-config-volume
           hostPath:
-            path: /var/lib/cratekube/kubeconfig
+           path: /var/lib/cratekube/kubeconfig
