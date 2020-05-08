@@ -5,11 +5,11 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - port: 9000
-      targetPort: 9000
-      nodePort: 30000
-      protocol: TCP
-      name: http
+  - port: 9000
+    targetPort: 9000
+    nodePort: 30000
+    protocol: TCP
+    name: http
   selector:
     name: lifecycle-service
 ---
@@ -36,12 +36,16 @@ spec:
          - mountPath: /app/kube/kubeconfig
            name: kube-config-volume
          env:
-          - name: ADMIN_APIKEY
-            valueFrom:
+         - name: GITHUB_ORG_API_REPO_HOME
+           value: https://api.github.com/repos/kod4n
+         - name: GITHUB_ORG_RAW_HOME
+           value: https://raw.githubusercontent.com/kod4n
+         - name: ADMIN_APIKEY
+           valueFrom:
              secretKeyRef:
-              name: cratekube-api-secret
-              key: admin-api-key
+               name: cratekube-api-secret
+               key: admin-api-key
       volumes:
-        - name: kube-config-volume
-          hostPath:
-           path: /var/lib/cratekube/kubeconfig
+      - name: kube-config-volume
+        hostPath:
+          path: /var/lib/cratekube/kubeconfig
